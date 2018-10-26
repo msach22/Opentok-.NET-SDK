@@ -1071,6 +1071,45 @@ namespace OpenTokSDKTest
             opentok.Signal(sessionId, signalProperties, connectionId);
         }
 
+        [Fact]
+        public void DialThrowsException()
+        {
+            string sessionId = "";
+            string token = "";
+            string sipUri = "";
+            SipProperties sipProperties = new SipProperties(sipUri);
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            try
+            {
+                opentok.Dial(sessionId, token, sipProperties);
+            }
+            catch (OpenTokArgumentException e)
+            {
+                Assert.True(true);
+            }
+        }
+
+        [Fact]
+        public void DialTest()
+        {
+            string sessionId = "SESSIONId";
+            string token = "TOKEN";
+            string sipUri = "sip:0000000@sip.nexmo.com";
+            SipProperties sipProperties = new SipProperties(sipUri);
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            Sip sipData = opentok.Dial(sessionId, token, sipProperties);
+            
+        }
 
         private Dictionary<string,string> CheckToken(string token, int apiKey)
         {

@@ -672,5 +672,53 @@ namespace OpenTokSDK
             };
             Client.Post(url, headers, data);
         }
+
+        public Sip Dial(string sessionId, string token, SipProperties sipProperties)
+        {
+            if (String.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty or null");
+            }
+
+            if (String.IsNullOrEmpty(token))
+            {
+                throw new OpenTokArgumentException("The token cannot be empty or null");
+            }
+
+            string url = String.Format("v2/project/{0}/dial", this.ApiKey);
+
+            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var sipDictionary = new Dictionary<string, object>
+            {
+                { "uri", sipProperties.uri }
+            };
+            if (!String.IsNullOrEmpty(sipProperties.from))
+            {
+                sipDictionary.Add("from", sipProperties.from);
+            }
+
+            if (sipProperties.headers != null && sipProperties.headers.Count > 0)
+            {
+                sipDictionary.Add("headers", sipProperties.headers);
+            }
+
+            var authDictionary = new Dictionary<string, string>
+            {
+                { "username", sipProperties.username },
+                { "password", sipProperties.password }
+            };
+
+            var data = new Dictionary<string, object>
+            {
+                { "sessionId", sessionId },
+                { "token", token },
+                { "sip" , sipDictionary },
+                { "auth", authDictionary },
+                { "secure", sipProperties.secure.ToString() }
+            };
+
+            string response = Client.Post(url, headers, data);
+            return OpenTokUtils.GenerateSip(response);
+        }
     }
 }

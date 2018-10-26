@@ -129,6 +129,14 @@ namespace OpenTokSDK.Util
             return broadcastCopy;
         }
 
+        internal static Sip GenerateSip(string response)
+        {
+            Sip sip = JsonConvert.DeserializeObject<Sip>(response);
+            Sip sipCopy = new Sip();
+            sipCopy.CopySip(sip);
+            return sipCopy;
+        }
+
         public static string convertToCamelCase(string text)
         {
             return Char.ToLowerInvariant(text[0]) + text.Substring(1);
